@@ -4,12 +4,16 @@ public class Main {
     public static void main(String[] args) throws Exception {
         
         Scanner sc = new Scanner(System.in);
-        System.out.print("$ ");
 
+        //implement a REPL (Read-Eval-Print Loop)
+        while(true){
+        System.out.print("$ ");
         String command = sc.nextLine();
 
         //As of now we will throw all commands as invalid.    
         System.out.println(command+": command not found");
+        }
+
         sc.close();
     }
 }
