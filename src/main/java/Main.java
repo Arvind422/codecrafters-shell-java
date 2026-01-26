@@ -7,11 +7,15 @@ public class Main {
 
         //implement a REPL (Read-Eval-Print Loop)
         while(true){
-        System.out.print("$ ");
-        String command = sc.nextLine();
+            System.out.print("$ ");
+            String command = sc.nextLine();
 
-        //As of now we will throw all commands as invalid.    
-        System.out.println(command+": command not found");
+            if (command.equals("exit")) {
+                System.out.println("Exiting shell...");
+                break;
+            }
+            //As of now we will throw all commands as invalid.    
+            System.out.println(command+": command not found");
         }
 
         sc.close();
