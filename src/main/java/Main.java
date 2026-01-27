@@ -14,6 +14,13 @@ public class Main {
             if (command.equals("exit")) {
                 break;
             }
+
+            // Logic to echo output the shell
+            if (command.contains("echo ") && command.length() > 5) {
+                System.out.println(command.split("echo ")[1]);
+                break;
+            }
+
             //As of now we will throw all commands as invalid.    
             System.out.println(command+": command not found");
         }
