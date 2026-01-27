@@ -18,6 +18,7 @@ public class Main {
             // Logic to echo output the shell
             if (command.contains("echo")) {
                 System.out.println(command.length() > 5 ? command.split("echo ")[1] : "");
+                continue;
             }
 
             //As of now we will throw all commands as invalid.    
