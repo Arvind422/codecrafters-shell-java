@@ -10,6 +10,7 @@ public class Main {
             System.out.print("$ ");
             String command = sc.nextLine();
 
+            // Logic to exit the shell
             if (command.equals("exit")) {
                 System.out.println("Exiting shell...");
                 break;
