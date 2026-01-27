@@ -16,8 +16,8 @@ public class Main {
             }
 
             // Logic to echo output the shell
-            if (command.contains("echo ") && command.length() > 5) {
-                System.out.println(command.split("echo ")[1]);
+            if (command.contains("echo")) {
+                System.out.println(command.length() > 5 ? command.split("echo ")[1] : "");
                 break;
             }
 
