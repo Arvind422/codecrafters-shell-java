@@ -12,7 +12,6 @@ public class Main {
 
             // Logic to exit the shell
             if (command.equals("exit")) {
-                System.out.println("Exiting shell...");
                 break;
             }
             //As of now we will throw all commands as invalid.    
