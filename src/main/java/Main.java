@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -30,7 +32,22 @@ public class Main {
                     System.out.println( (command.split("type ")[1]) + " is a shell builtin");
                 }
                 else{
-                    System.out.println((command.length() > 5 ? command.split("type ")[1] : "") +": not found");
+                    String pathEnv = System.getenv("PATH");
+                    String envStr = "";
+                    if(pathEnv != null && !pathEnv.isEmpty() ){
+                        String[] envPaths = pathEnv.split(";");
+                        for(String envPath : envPaths){
+                            if( command.length() > 5 && (envPath).contains(command.split(" ")[1]) && Files.isExecutable(Path.of(envPath)) ){
+                                envStr = " is " + envPath;
+                            }
+                        }
+                    }
+                    if(!envStr.isEmpty()){
+                        System.out.println(command.split("type ")[1] + envStr);
+                    }
+                    else{
+                        System.out.println((command.length() > 5 ? command.split("type ")[1] : "") +": not found");
+                    }
                 }
                 continue;
             }
