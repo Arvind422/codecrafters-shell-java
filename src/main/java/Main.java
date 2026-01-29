@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -28,25 +29,28 @@ public class Main {
 
             // Type command logic
             if (command.contains("type")) {
-                if(command.length() > 5 &&  Arrays.stream(allowedCommands).anyMatch( command.split("type ")[1]::contains)){
-                    System.out.println( (command.split("type ")[1]) + " is a shell builtin");
+                String commandName = command.split("type ")[1];
+                if(command.length() > 5 &&  Arrays.stream(allowedCommands).anyMatch( command.split("type ")[1]::equals)){
+                    System.out.println( commandName + " is a shell builtin");
                 }
                 else{
                     String pathEnv = System.getenv("PATH");
                     String envStr = "";
+                    boolean found = false;
                     if(pathEnv != null && !pathEnv.isEmpty() ){
-                        String[] envPaths = pathEnv.split(";");
+                        String[] envPaths = pathEnv.split(":");
+
                         for(String envPath : envPaths){
-                            if( command.length() > 5 && (envPath).contains(command.split(" ")[1]) && Files.isExecutable(Path.of(envPath)) ){
-                                envStr = " is " + envPath;
+                            Path fullPath = Path.of(envPath,commandName);
+                            if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
+                                System.out.println(commandName + " is " + fullPath);
+                                found = true;
+                                break;
                             }
                         }
                     }
-                    if(!envStr.isEmpty()){
-                        System.out.println(command.split("type ")[1] + envStr);
-                    }
-                    else{
-                        System.out.println((command.length() > 5 ? command.split("type ")[1] : "") +": not found");
+                    if (!found) {
+                        System.out.println(commandName +": not found");
                     }
                 }
                 continue;
