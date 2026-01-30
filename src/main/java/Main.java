@@ -1,8 +1,6 @@
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -14,7 +12,7 @@ public class Main {
         //implement a REPL (Read-Eval-Print Loop)
         while(true){
             System.out.print("$ ");
-            String command = sc.nextLine();
+            String command = sc.nextLine().trim();
 
             // Logic to exit the shell
             if (command.equals("exit")) {
@@ -35,7 +33,6 @@ public class Main {
                 }
                 else{
                     String pathEnv = System.getenv("PATH");
-                    String envStr = "";
                     boolean found = false;
                     if(pathEnv != null && !pathEnv.isEmpty() ){
                         String[] envPaths = pathEnv.split(":");
@@ -56,8 +53,44 @@ public class Main {
                 continue;
             }
 
-            //As of now we will throw all commands as invalid.    
+            String[] argus = command.trim().split(" ");
+            if(argus.length > 1){
+                String commandName = argus[0];
+
+                String pathEnv = System.getenv("PATH");
+
+                if(pathEnv != null && !pathEnv.isEmpty() ){
+                    String[] envPaths = pathEnv.split(":");
+
+                    for(String envPath : envPaths){
+                        Path fullPath = Path.of(envPath,commandName);
+                        if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
+                            ProcessBuilder pb = new ProcessBuilder(argus);
+                            pb.redirectErrorStream(true);
+
+                            Process process = pb.start();
+
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())
+                            );
+
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                System.out.println(line);
+                            }
+
+                            int exitCode = process.waitFor();
+                            System.out.println("Exit code: " + exitCode);
+
+                            break;
+                        }
+                    }
+                }
+
+            }
+
+            //As of now we will throw all commands as invalid.
             System.out.println(command+": command not found");
+
         }
 
         sc.close();
