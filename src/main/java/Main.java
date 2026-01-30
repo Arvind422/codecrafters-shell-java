@@ -53,43 +53,43 @@ public class Main {
                 continue;
             }
 
+            boolean commandFound  = false;
             String[] argus = command.trim().split(" ");
-            if(argus.length > 1){
-                String commandName = argus[0];
+            String commandName = argus[0];
 
-                String pathEnv = System.getenv("PATH");
+            String pathEnv = System.getenv("PATH");
 
-                if(pathEnv != null && !pathEnv.isEmpty() ){
-                    String[] envPaths = pathEnv.split(":");
+            if(pathEnv != null && !pathEnv.isEmpty() ){
+                String[] envPaths = pathEnv.split(":");
 
-                    for(String envPath : envPaths){
-                        Path fullPath = Path.of(envPath,commandName);
-                        if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
-                            ProcessBuilder pb = new ProcessBuilder(argus);
-                            pb.redirectErrorStream(true);
+                for(String envPath : envPaths){
+                    Path fullPath = Path.of(envPath,commandName);
+                    if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
+                        commandFound = true;
+                        ProcessBuilder pb = new ProcessBuilder(argus);
+                        pb.redirectErrorStream(true);
 
-                            Process process = pb.start();
+                        Process process = pb.start();
 
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())
-                            );
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())
+                        );
 
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                System.out.println(line);
-                            }
-
-                            int exitCode = process.waitFor();
-                            System.out.println("Exit code: " + exitCode);
-
-                            break;
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            System.out.println(line);
                         }
+                        process.waitFor();
+
+                        break;
                     }
                 }
-
             }
 
-            //As of now we will throw all commands as invalid.
-            System.out.println(command+": command not found");
+
+            if(!commandFound){
+                System.out.println(command+": command not found");
+            }
+
 
         }
 
