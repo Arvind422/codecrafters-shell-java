@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String[] allowedCommands = {"echo" , "type", "exit"};
+        String[] allowedCommands = {"echo" , "type", "exit" , "pwd"};
 
         Scanner sc = new Scanner(System.in);
 
