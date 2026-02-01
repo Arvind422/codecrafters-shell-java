@@ -14,6 +14,12 @@ public class Main {
             System.out.print("$ ");
             String command = sc.nextLine().trim();
 
+            // Logic to print the working directory
+            if (command.equals("pwd")) {
+                pwd();
+                continue;
+            }
+
             // Logic to exit the shell
             if (command.equals("exit")) {
                 break;
@@ -53,6 +59,7 @@ public class Main {
                 continue;
             }
 
+            // Logic to check executable files & execute them.
             boolean commandFound  = false;
             String[] argus = command.trim().split(" ");
             String commandName = argus[0];
@@ -95,4 +102,13 @@ public class Main {
 
         sc.close();
     }
+
+    public static void pwd() {
+        String cwd = System.getProperty("user.dir");
+        System.out.println(cwd);
+    }
+
+
 }
+
+
