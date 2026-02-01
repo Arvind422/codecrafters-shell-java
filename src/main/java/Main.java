@@ -14,12 +14,6 @@ public class Main {
             System.out.print("$ ");
             String command = sc.nextLine().trim();
 
-            // Logic to print the working directory
-            if (command.equals("pwd")) {
-                pwd();
-                continue;
-            }
-
             // Logic to exit the shell
             if (command.equals("exit")) {
                 break;
@@ -31,31 +25,15 @@ public class Main {
                 continue;
             }
 
+            // Logic to print the working directory
+            if (command.equals("pwd")) {
+                pwd();
+                continue;
+            }
+
             // Type command logic
             if (command.contains("type")) {
-                String commandName = command.split("type ")[1];
-                if(command.length() > 5 &&  Arrays.stream(allowedCommands).anyMatch( command.split("type ")[1]::equals)){
-                    System.out.println( commandName + " is a shell builtin");
-                }
-                else{
-                    String pathEnv = System.getenv("PATH");
-                    boolean found = false;
-                    if(pathEnv != null && !pathEnv.isEmpty() ){
-                        String[] envPaths = pathEnv.split(":");
-
-                        for(String envPath : envPaths){
-                            Path fullPath = Path.of(envPath,commandName);
-                            if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
-                                System.out.println(commandName + " is " + fullPath);
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        System.out.println(commandName +": not found");
-                    }
-                }
+                typeMethod(command , allowedCommands);
                 continue;
             }
 
@@ -73,41 +51,67 @@ public class Main {
                     Path fullPath = Path.of(envPath,commandName);
                     if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
                         commandFound = true;
-                        ProcessBuilder pb = new ProcessBuilder(argus);
-                        pb.redirectErrorStream(true);
-
-                        Process process = pb.start();
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())
-                        );
-
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            System.out.println(line);
-                        }
-                        process.waitFor();
-
+                        executeEXEwithArgs(argus);
                         break;
                     }
                 }
             }
 
-
             if(!commandFound){
                 System.out.println(command+": command not found");
             }
 
-
         }
-
         sc.close();
+    }
+
+    public static void typeMethod(String command,String[] allowedCommands){
+        String commandName = command.split("type ")[1];
+        if(command.length() > 5 &&  Arrays.stream(allowedCommands).anyMatch( command.split("type ")[1]::equals)){
+            System.out.println( commandName + " is a shell builtin");
+        }
+        else{
+            String pathEnv = System.getenv("PATH");
+            boolean found = false;
+            if(pathEnv != null && !pathEnv.isEmpty() ){
+                String[] envPaths = pathEnv.split(":");
+
+                for(String envPath : envPaths){
+                    Path fullPath = Path.of(envPath,commandName);
+                    if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
+                        System.out.println(commandName + " is " + fullPath);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                System.out.println(commandName +": not found");
+            }
+        }
+    }
+
+    public static void executeEXEwithArgs(String[] argus) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(argus);
+        pb.redirectErrorStream(true);
+
+        Process process = pb.start();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())
+        );
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        process.waitFor();
+
     }
 
     public static void pwd() {
         String cwd = System.getProperty("user.dir");
         System.out.println(cwd);
     }
-
 
 }
 
