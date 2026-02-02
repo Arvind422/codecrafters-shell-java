@@ -3,10 +3,11 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Main {
+    static Path currentDir = Paths.get(System.getProperty("user.dir"));
+
     public static void main(String[] args) throws Exception {
 
         String[] allowedCommands = {"echo" , "type", "exit" , "pwd"};
-
         Scanner sc = new Scanner(System.in);
 
         //implement a REPL (Read-Eval-Print Loop)
@@ -15,13 +16,19 @@ public class Main {
             String command = sc.nextLine().trim();
 
             // Logic to exit the shell
-            if (command.equals("exit")) {
-                break;
-            }
+            if (command.equals("exit")) break;
 
             // Logic to echo output the shell
             if (command.contains("echo ") || command.split(" ")[0].equals("echo")) {
                 System.out.println(command.length() > 5 ? command.split("echo ")[1] : "");
+                continue;
+            }
+
+            // Logic to Change the Current Directory
+            if(command.startsWith("cd")){
+                String[] parts = command.split("\\s+", 2);
+                String arg = parts.length > 1 ? parts[1] : "";
+                changeDirectory(arg);
                 continue;
             }
 
@@ -32,7 +39,7 @@ public class Main {
             }
 
             // Type command logic
-            if (command.contains("type")) {
+            if (command.startsWith("type")) {
                 typeMethod(command , allowedCommands);
                 continue;
             }
@@ -51,15 +58,14 @@ public class Main {
                     Path fullPath = Path.of(envPath,commandName);
                     if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
                         commandFound = true;
-                        executeEXEwithArgs(argus);
+                        executeExeWithArgs(argus);
                         break;
                     }
                 }
             }
 
-            if(!commandFound){
+            if(!commandFound)
                 System.out.println(command+": command not found");
-            }
 
         }
         sc.close();
@@ -85,13 +91,13 @@ public class Main {
                     }
                 }
             }
-            if (!found) {
+            if (!found)
                 System.out.println(commandName +": not found");
-            }
+
         }
     }
 
-    public static void executeEXEwithArgs(String[] argus) throws IOException, InterruptedException {
+    public static void executeExeWithArgs(String[] argus) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(argus);
         pb.redirectErrorStream(true);
 
@@ -113,6 +119,21 @@ public class Main {
         System.out.println(cwd);
     }
 
+    static void changeDirectory(String arg) {
+        if (arg == null || arg.isEmpty()){
+            currentDir = Paths.get(System.getProperty("user.home"));
+            return;
+        }
+
+        Path newPath = currentDir.resolve(arg).normalize();
+
+        if(newPath.toFile().exists() && newPath.toFile().isDirectory()){
+            currentDir = newPath;
+        }
+        else{
+            System.out.println("cd: "+arg+": No such file or directory");
+        }
+    }
 }
 
 
