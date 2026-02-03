@@ -115,8 +115,8 @@ public class Main {
     }
 
     public static void pwd() {
-        String cwd = System.getProperty("user.dir");
-        System.out.println(cwd);
+//        String cwd = System.getProperty("user.dir");
+        System.out.println(currentDir);
     }
 
     static void changeDirectory(String arg) {
