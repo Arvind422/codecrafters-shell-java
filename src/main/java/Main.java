@@ -130,6 +130,7 @@ public class Main {
                 homepath = System.getenv("USERPROFILE"); //On Windows, HOME may not be set.
             }
             currentDir = Paths.get(homepath);
+            return;
         }
 
         Path newPath = currentDir.resolve(arg).normalize();
