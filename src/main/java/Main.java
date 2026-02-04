@@ -120,7 +120,7 @@ public class Main {
     }
 
     static void changeDirectory(String arg) {
-        if (arg == null || arg.isEmpty()){
+        if (arg == null || arg.isEmpty() || arg.equals("~")){
             currentDir = Paths.get(System.getProperty("user.home"));
             return;
         }
