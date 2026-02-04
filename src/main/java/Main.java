@@ -120,9 +120,16 @@ public class Main {
     }
 
     static void changeDirectory(String arg) {
-        if (arg == null || arg.isEmpty() || arg.equals("~")){
+        if (arg == null || arg.isEmpty()){
             currentDir = Paths.get(System.getProperty("user.home"));
             return;
+        }
+        if(arg.equals("~")){
+            String homepath = System.getenv("HOME");
+            if(homepath == null || homepath.isEmpty()){
+                homepath = System.getenv("USERPROFILE"); //On Windows, HOME may not be set.
+            }
+            currentDir = Paths.get(homepath);
         }
 
         Path newPath = currentDir.resolve(arg).normalize();
